@@ -43,6 +43,7 @@
         <dependency>
             <groupId>org.nanoframework</groupId>
             <artifactId>nano-jmx-client</artifactId>
+            <version>${nano-jmx-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
