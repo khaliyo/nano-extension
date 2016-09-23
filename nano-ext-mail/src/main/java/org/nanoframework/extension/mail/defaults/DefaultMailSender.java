@@ -35,7 +35,7 @@ public class DefaultMailSender extends AbstractMailSender {
     
     @Override
     public Properties getProperties() {
-        Properties prop = new Properties();
+        final Properties prop = new Properties();
         prop.setProperty("mail.smtp.host", getMailServerHost());
         prop.setProperty("mail.smtp.port", getMailServerPort());
         prop.setProperty("mail.smtp.auth", isValidate() ? "true" : "false");
@@ -44,9 +44,8 @@ public class DefaultMailSender extends AbstractMailSender {
         prop.setProperty("mail.smtp.socketFactory.port", getMailServerPort());
         prop.setProperty("mail.smtp.starttls.enable", "true");
         
-        MailSSLSocketFactory sf = null;
         try {
-            sf = new MailSSLSocketFactory();
+            final MailSSLSocketFactory sf = new MailSSLSocketFactory();
             sf.setTrustAllHosts(true); 
             prop.put("mail.smtp.ssl.socketFactory", sf);  
         } catch (final GeneralSecurityException e) {

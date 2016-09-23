@@ -27,24 +27,16 @@ import org.nanoframework.commons.entity.BaseEntity;
  */
 public abstract class AbstractMailSender extends BaseEntity {
     private static final long serialVersionUID = 7448156380947823302L;
-    
-    // 发送邮件的服务器的IP和端口   
+
     private String mailServerHost;
     private String mailServerPort = "25";
-    // 邮件发送者的地址   
     private String fromAddress;
-    // 邮件接收者的地址   
     private String toAddress;
-    // 登陆邮件发送服务器的用户名和密码   
     private String userName;
     private String password;
-    // 是否需要身份验证   
     private boolean validate;
-    // 邮件主题   
     private String subject;
-    // 邮件的文本内容   
     private String content;
-    // 邮件附件的文件名   
     private String[] attachFileNames;
 
     /**

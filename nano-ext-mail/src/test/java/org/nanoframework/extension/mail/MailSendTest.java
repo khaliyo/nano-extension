@@ -46,7 +46,7 @@ public class MailSendTest {
         System.setProperty(VALIDATE, "true");
         System.setProperty(USERNAME, "test@nanoframework.org");
         System.setProperty(PASSWORD, "RkUxNTM4Mjg4RUNDNzYyQkEyMzQwRDMyOEUyNEI1NTY1");
-        System.setProperty(FROM, "test@nanoframework.org");
+        System.setProperty(FROM, "NanoTest");
         System.setProperty(DEBUG_ENABLED, "true");
     }
     
@@ -59,6 +59,6 @@ public class MailSendTest {
         builder.append("<p>Compiler or Package or Depoly this Framework</p>");
         builder.append("<p>").append(DateFormat.format(System.currentTimeMillis(), Pattern.DATETIME)).append("</p>");
         builder.append("<p>nanoframework.org © 2015-2016</p>");
-        Assert.assertEquals(mailSenderFactory.sendMail("NanoFramework Compiler", builder.toString(), "comicme_yanghe@icloud.com"), true);
+        Assert.assertEquals(mailSenderFactory.sendMail("NanoFramework Compiler", builder.toString(), "comicme_yanghe@nanoframework.org"), true);
     }
 }
