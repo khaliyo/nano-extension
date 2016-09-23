@@ -1,8 +1,9 @@
 # Nano Extension简介
 
-	此模块为NanoFramework的扩展插件模块，此模块主要针对一些需要使用的外部扩展进行封装，集成至NanoFramework中，使其在使用过程中达到最大的简化。
+	此模块为NanoFramework的扩展插件模块，此模块主要针对一些需要使用的外部扩展进行封装，集成至NanoFramework中，
+	使其在使用过程中达到最大的简化。
 	
-#### HttpClient扩展模块
+### HttpClient扩展模块
 
 ```java
 import org.nanoframework.extension.httpclient.HttpClient;
@@ -19,7 +20,7 @@ HttpResponse response = client.get("www.baidu.com");
 
 HttpClient中封装了大部分的http请求操作，因操作上非常简单，所以不再一一进行示例说明。
 
-#### Mail扩展模块
+### Mail扩展模块
 
 ```java
 import static org.nanoframework.extension.mail.AbstractMailSenderFactory.DEBUG_ENABLED;
@@ -34,9 +35,6 @@ import org.nanoframework.extension.mail.defaults.DefaultMailSenderFactory;
 
 import com.google.inject.Inject;
 
-@Inject
-private DefaultMailSenderFactory senderFactory;
-
 // Invoke once
 System.setProperty(HOST, <SMTP server address>);
 System.setProperty(PORT, <SMTP port>);
@@ -45,6 +43,9 @@ System.setProperty(USERNAME, <Sender username>);
 System.setProperty(PASSWORD, <Sender password>);
 System.setProperty(FROM, <From display name>);
 System.setProperty(DEBUG_ENABLED, <If true, enabled debug mode>);
+
+@Inject
+private DefaultMailSenderFactory senderFactory;
 
 // Invoke in method
 boolean success = senderFactory.sendMail("Title", "Content", "To1,To2,...,ToAny");
