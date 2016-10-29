@@ -48,6 +48,19 @@
         <nano-jmx-version>1.4.0</nano-jmx-version>
     </properties>
     
+    <distributionManagement>
+        <repository>
+            <id>oss-releases</id>
+            <name>oss-releases</name>
+            <url>https://oss.sonatype.org/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>oss-snapshots</id>
+            <name>oss-snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+    
     <issueManagement>
         <system>GitHub</system>
         <url>https://github.com/nano-projects/nano-extension/issues</url>

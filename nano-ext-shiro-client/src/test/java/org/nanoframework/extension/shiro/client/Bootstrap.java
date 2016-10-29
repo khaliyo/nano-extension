@@ -15,8 +15,8 @@
  */
 package org.nanoframework.extension.shiro.client;
 
-import org.nanoframework.server.Commands;
 import org.nanoframework.server.JettyCustomServer;
+import org.nanoframework.server.cmd.Commands;
 
 /**
  *
