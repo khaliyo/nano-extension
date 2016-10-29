@@ -13,17 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.nanoframework.ext.shiro;
-
-import org.nanoframework.server.JettyCustomServer;
-import org.nanoframework.server.cmd.Commands;
+package org.nanoframework.extension.dubbo.service;
 
 /**
+ *
  * @author yanghe
- * @date 2015年12月9日 下午5:11:32
+ * @since 1.4.1
  */
-public class ShiroStartup {
-	public static void main(String[] args) {
-	    JettyCustomServer.server().bootstrap(Commands.START.toString());
-	}
+public interface HelloWorldService {
+	String say(String who);
+	
 }

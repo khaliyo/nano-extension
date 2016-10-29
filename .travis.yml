@@ -2,5 +2,12 @@ language: java
 jdk:
   - oraclejdk8
   
+services:
+  - docker
+  - docker-compose
+  
+install:
+  - docker-compose up -d
+  
 notifications:
   email: false

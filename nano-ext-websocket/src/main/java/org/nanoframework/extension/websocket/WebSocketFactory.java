@@ -16,13 +16,10 @@
 package org.nanoframework.extension.websocket;
 
 import static org.nanoframework.core.context.ApplicationContext.WEBSOCKET_BASE_PACKAGE;
-import java.security.cert.CertificateException;
+
 import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-
-import javax.net.ssl.SSLException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.nanoframework.commons.loader.LoaderException;
@@ -30,10 +27,11 @@ import org.nanoframework.commons.loader.PropertiesLoader;
 import org.nanoframework.commons.support.logging.Logger;
 import org.nanoframework.commons.support.logging.LoggerFactory;
 import org.nanoframework.commons.util.Assert;
-import org.nanoframework.core.component.scan.ComponentScan;
+import org.nanoframework.core.component.scan.ClassScanner;
 import org.nanoframework.core.context.ApplicationContext;
 import org.nanoframework.core.globals.Globals;
 
+import com.google.common.collect.Maps;
 import com.google.inject.Injector;
 
 /**
@@ -41,13 +39,12 @@ import com.google.inject.Injector;
  * @since 1.1
  */
 public class WebSocketFactory {
-	private static Logger LOG = LoggerFactory.getLogger(WebSocketFactory.class);
-	private static boolean isLoaded = false;
+	private static Logger LOGGRE = LoggerFactory.getLogger(WebSocketFactory.class);
+	private static boolean LOADED = false;
+	private static final ConcurrentMap<String, WebSocketServer> HANDLER = Maps.newConcurrentMap();
 	
-	private static final ConcurrentMap<String, WebSocketServer> handlerMap = new ConcurrentHashMap<>();
-	
-	public static final void load() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException, CertificateException, SSLException, InterruptedException {
-		if(isLoaded) {
+	public static final void load() throws Throwable {
+		if(LOADED) {
 			throw new LoaderException("WebSocket已经加载，这里不再进行重复的加载，如需重新加载请调用reload方法");
 		}
 
@@ -56,21 +53,20 @@ public class WebSocketFactory {
 		}
 		
 		PropertiesLoader.PROPERTIES.values().stream().filter(item -> item.getProperty(WEBSOCKET_BASE_PACKAGE) != null).forEach(item -> {
-			ComponentScan.scan(item.getProperty(WEBSOCKET_BASE_PACKAGE));
+			ClassScanner.scan(item.getProperty(WEBSOCKET_BASE_PACKAGE));
 		});
 		
-		Set<Class<?>> componentClasses = ComponentScan.filter(WebSocket.class);
-		LOG.info("WebSocket size: " + componentClasses.size());
+		final Set<Class<?>> classes = ClassScanner.filter(WebSocket.class);
+		LOGGRE.info("WebSocket size: " + classes.size());
 		
-		if(componentClasses.size() > 0) {
-			for(Class<?> clz : componentClasses) {
-				if(AbstractWebSocketHandler.class.isAssignableFrom(clz)) {
-					LOG.info("Inject WebSocket Class: " + clz.getName());
-					WebSocket websocket = clz.getAnnotation(WebSocket.class);
+		if(classes.size() > 0) {
+			for(final Class<?> cls : classes) {
+				if(AbstractWebSocketHandler.class.isAssignableFrom(cls)) {
+					LOGGRE.info("Inject WebSocket Class: " + cls.getName());
+					final WebSocket websocket = cls.getAnnotation(WebSocket.class);
 					String webSocketName = websocket.value();
 					if(StringUtils.isBlank(websocket.value())) {
-//						throw new WebSocketException("WebSocket名不能为空, 类名 [ " + clz.getName()+ " ]");
-						webSocketName = clz.getSimpleName();
+						webSocketName = cls.getSimpleName();
 					}
 					
 					String host = null;
@@ -78,39 +74,39 @@ public class WebSocketFactory {
 					Integer proxyPort = null;
 					Boolean ssl = null;
 					String location = null;
-					for(Properties properties : PropertiesLoader.PROPERTIES.values()) {
+					for(final Properties properties : PropertiesLoader.PROPERTIES.values()) {
 						if(StringUtils.isNotBlank(websocket.hostProperty())) {
-							String _host = properties.getProperty(websocket.hostProperty());
-							if(StringUtils.isNotBlank(_host)) {
-								host = _host;
+							final String h = properties.getProperty(websocket.hostProperty());
+							if(StringUtils.isNotBlank(h)) {
+								host = h;
 							}
 						}
 						
 						if(StringUtils.isNotBlank(websocket.portProperty())) {
-							String _port = properties.getProperty(websocket.portProperty());
-							if(StringUtils.isNotBlank(_port)) {
-								port = Integer.valueOf(_port);
+						    final String p = properties.getProperty(websocket.portProperty());
+							if(StringUtils.isNotBlank(p)) {
+								port = Integer.valueOf(p);
 							}
 						}
 						
 						if(StringUtils.isNotBlank(websocket.proxyPortProperty())) {
-							String _proxyPort = properties.getProperty(websocket.proxyPortProperty());
-							if(StringUtils.isNotBlank(_proxyPort)) {
-								proxyPort = Integer.valueOf(_proxyPort);
+						    final String pp = properties.getProperty(websocket.proxyPortProperty());
+							if(StringUtils.isNotBlank(pp)) {
+								proxyPort = Integer.valueOf(pp);
 							}
 						}
 						
 						if(StringUtils.isNotBlank(websocket.sslProperty())) {
-							String _ssl = properties.getProperty(websocket.sslProperty());
-							if(StringUtils.isNotBlank(_ssl)) {
-								ssl = Boolean.valueOf(_ssl);
+						    final String s = properties.getProperty(websocket.sslProperty());
+							if(StringUtils.isNotBlank(s)) {
+								ssl = Boolean.valueOf(s);
 							}
 						}
 						
 						if(StringUtils.isNotBlank(websocket.locationProperty())) {
-							String _location = properties.getProperty(websocket.locationProperty());
-							if(StringUtils.isNotBlank(_location)) {
-								location = _location;
+						    final String l = properties.getProperty(websocket.locationProperty());
+							if(StringUtils.isNotBlank(l)) {
+								location = l;
 							}
 						}
 					}
@@ -131,27 +127,26 @@ public class WebSocketFactory {
 						ssl = websocket.ssl();
 					}
 					
-					if(StringUtils.isBlank(location))
+					if(StringUtils.isBlank(location)) {
 						location = websocket.location();
+					}
 					
 					Assert.hasLength(location);
 					location = System.getProperty(ApplicationContext.CONTEXT_ROOT) + location;
 					
-					AbstractWebSocketHandler handler = (AbstractWebSocketHandler) Globals.get(Injector.class).getInstance(clz);
+					final AbstractWebSocketHandler handler = (AbstractWebSocketHandler) Globals.get(Injector.class).getInstance(cls);
 					handler.setLocation(location);
-					handlerMap.put(webSocketName, WebSocketServer.create(host, port, proxyPort, ssl, location, handler));
-					
-				} else 
+					HANDLER.put(webSocketName, WebSocketServer.create(host, port, proxyPort, ssl, location, handler));
+				} else {
 					throw new WebSocketException("必须继承: [ "+AbstractWebSocketHandler.class.getName()+" ]");
-				
+				}
 			}
-			
 		}
 		
-		isLoaded = true;
+		LOADED = true;
 	}
 	
-	public static final WebSocketServer get(String name) {
-		return handlerMap.get(name);
+	public static final WebSocketServer get(final String name) {
+		return HANDLER.get(name);
 	}
 }

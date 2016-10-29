@@ -106,7 +106,7 @@
         </dependency>
         <dependency>
             <groupId>org.nanoframework</groupId>
-            <artifactId>nano-server</artifactId>
+            <artifactId>nano-jetty-server</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
