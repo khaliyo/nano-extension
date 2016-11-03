@@ -16,6 +16,7 @@
 package org.nanoframework.extension.dubbo;
 
 import java.lang.reflect.Method;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
@@ -31,19 +32,32 @@ import com.alibaba.dubbo.config.utils.ReferenceConfigCache;
  * @since 1.4.1
  */
 public class DubboReferenceInterceptor implements MethodInterceptor {
+    private final ReentrantLock lock = new ReentrantLock();
+    
     @Override
     public Object invoke(final MethodInvocation invocation) throws Throwable {
-        final Object instance = invocation.proceed();
+        Object instance = invocation.proceed();
         if (instance != null) {
             return instance;
         }
 
-        final Method method = invocation.getMethod();
-        final Class<?> returnType = method.getReturnType();
-        final ReferenceConfig<?> refer = createRefer(method, returnType);
-        final Object newInstance = ReferenceConfigCache.getCache().get(refer);
-        setInstance(invocation.getThis(), method, returnType, newInstance);
-        return invocation.proceed();
+        final ReentrantLock lock = this.lock;
+        try {
+            lock.lock();
+            instance = invocation.proceed();
+            if (instance != null) {
+                return instance;
+            }
+            
+            final Method method = invocation.getMethod();
+            final Class<?> returnType = method.getReturnType();
+            final ReferenceConfig<?> refer = createRefer(method, returnType);
+            final Object newInstance = ReferenceConfigCache.getCache().get(refer);
+            setInstance(invocation.getThis(), method, returnType, newInstance);
+            return invocation.proceed();
+        } finally {
+            lock.unlock();
+        }
     }
 
     protected ReferenceConfig<?> createRefer(final Method method, final Class<?> returnType) {

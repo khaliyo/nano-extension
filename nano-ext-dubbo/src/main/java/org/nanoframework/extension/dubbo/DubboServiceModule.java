@@ -31,19 +31,17 @@ import org.nanoframework.core.globals.Globals;
 import org.nanoframework.core.plugins.Module;
 
 import com.alibaba.dubbo.config.ServiceConfig;
-import com.alibaba.dubbo.config.annotation.Reference;
 import com.alibaba.dubbo.config.annotation.Service;
 import com.google.common.collect.Lists;
 import com.google.inject.Injector;
-import com.google.inject.matcher.Matchers;
 
 /**
  *
  * @author yanghe
  * @since 1.4.1
  */
-public class DubboModule extends Module {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DubboModule.class);
+public class DubboServiceModule extends Module {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DubboServiceModule.class);
     
     @Override
     public List<Module> load() throws Throwable {
@@ -60,7 +58,6 @@ public class DubboModule extends Module {
     protected void configure() {
         scanDubboService();
         bindDubboService();
-        bindInterceptor(Matchers.any(), Matchers.annotatedWith(Reference.class), new DubboReferenceInterceptor());
     }
     
     protected void scanDubboService() {

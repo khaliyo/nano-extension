@@ -73,7 +73,7 @@ public class DubboServiceExportTest {
     
     @Test
     public void exportServiceTest() throws Throwable {
-        final HelloWorldService helloWorldService = Guice.createInjector(new DubboModule()).getInstance(HelloWorldProxy.class);
+        final HelloWorldService helloWorldService = Guice.createInjector(new DubboReferenceModule()).getInstance(HelloWorldProxy.class);
         Assert.assertEquals("Proxy: Hello, me", helloWorldService.say("me"));
         Assert.assertEquals("Proxy: Hello, you", helloWorldService.say("you"));
     }
