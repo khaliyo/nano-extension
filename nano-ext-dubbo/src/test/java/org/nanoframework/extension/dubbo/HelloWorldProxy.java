@@ -18,6 +18,7 @@ package org.nanoframework.extension.dubbo;
 import org.nanoframework.extension.dubbo.service.HelloWorldService;
 
 import com.alibaba.dubbo.config.annotation.Reference;
+import com.google.inject.Inject;
 
 /**
  *
@@ -28,6 +29,7 @@ public class HelloWorldProxy implements HelloWorldService {
 
     private HelloWorldService helloWorldService;
     
+    @Inject
     @Reference(check = false)
     public HelloWorldService getHelloWorldService() {
         return helloWorldService;
@@ -39,6 +41,6 @@ public class HelloWorldProxy implements HelloWorldService {
     
     @Override
     public String say(String who) {
-        return "Proxy: " + getHelloWorldService().say(who);
+        return "Proxy: " + helloWorldService.say(who);
     }
 }
