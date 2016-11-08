@@ -73,8 +73,6 @@ public class DubboServiceExportTest {
     
     @Test
     public void exportServiceTest() throws Throwable {
-        // wait service up
-        Thread.sleep(3000);
         final HelloWorldService helloWorldService = Guice.createInjector(new DubboReferenceModule()).getInstance(HelloWorldProxy.class);
         Assert.assertEquals("Proxy: Hello, me", helloWorldService.say("me"));
         Assert.assertEquals("Proxy: Hello, you", helloWorldService.say("you"));
