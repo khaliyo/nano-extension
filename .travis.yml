@@ -16,6 +16,7 @@ before_script:
   - git checkout dubbo-parent-3.0.0
   - mvn clean install -Dmaven.test.skip=true
   - cd ..
+  - rm -rf dubbox
   
 notifications:
   email: false
