@@ -13,6 +13,7 @@ install:
 before_script:
   - git clone https://github.com/riveryang/dubbox.git
   - cd dubbox
+  - git checkout dubbo-parent-3.0.0
   - mvn clean install -Dmaven.test.skip=true
   - cd ..
   
