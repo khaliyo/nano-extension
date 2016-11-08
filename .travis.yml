@@ -9,5 +9,12 @@ services:
 install:
   - docker-compose up -d
   
+  
+before_script:
+  - git clone https://github.com/riveryang/dubbox.git
+  - cd dubbox
+  - mvn clean install -Dmaven.test.skip=true
+  - cd ..
+  
 notifications:
   email: false
